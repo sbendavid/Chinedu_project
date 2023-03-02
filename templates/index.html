@@ -1,0 +1,19 @@
+<html>
+    <head><title>Playstore Applications</title></head>
+    <body>
+    <h1>Dataset for Applications in Playstore</h1>
+
+        {% for row in rows %}
+        <p>Application:
+        <b>{{row["id"]}}</b> |
+        <b>{{row["app_name"]}}</b> |
+        {{row["app_id"]}} |
+        {{row["app_version"]}} |
+        {{row['app_size']}}	|
+        {{row["app_rating"]}} |
+        {{row["release_date"]}}
+        {{row["developer_id"]}}
+        </p>
+        {% endfor %}
+
+    </body></html>
