@@ -15,10 +15,6 @@ def application():
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
     cur.execute("""SELECT *  FROM app""")
-    # cur.execute("""SELECT app_id_no, app.*, ratings_reviews.app_rating, app.release_date, developer.developer_uid  
-    #             FROM app 
-    #             LEFT JOIN ratings_reviews ON app.id = ratings_reviews.app_id
-    #             LEFT JOIN developer ON app.developer_id = developer.id""")
     rows = cur.fetchall()
 
     conn.close()
@@ -46,19 +42,27 @@ def review():
     conn = sqlite3.connect('playstore_apps.db')
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    # cur.execute("""SELECT ratings_reviews.*, app.app_rating
-    #                 FROM ratings_reviews
-    #                 INNER JOIN app ON ratings_reviews.rating_id = ratings_reviews.id
-    #             """)
     cur.execute("""SELECT ratings_reviews.*, app.app_rating
-                FROM ratings_reviews
-                INNER JOIN app ON app.rating_id = ratings_reviews.id
+                    FROM ratings_reviews
+                    JOIN app ON ratings_reviews.app_id = app.id
                 """)
     rows = cur.fetchall()
 
     conn.close()
 
     return render_template('review.html', rows=rows)
+
+@app.route('/app/<id>')
+def ratings(id):
+    conn = sqlite3.connect('playstore_apps.db')
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    # get results from customers
+    cur.execute('SELECT app_rating FROM app WHERE app_id = ?', (id,))
+    rating = cur.fetchone()[0]
+    print(f"The rating for app {id} is {rating}")
+    conn.close()
+    return render_template('result.html', rating=rating)
 
 if __name__ == '__main__':
     app.run(debug=True)

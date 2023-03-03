@@ -37,8 +37,9 @@ conn.execute(
     '''CREATE TABLE ratings_reviews (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         rating_count TEXT, 
-        reviews INTEGER
-        FOREIGN KEY (app_rating) REFERENCES customers(customer_id))''')
+        reviews INTEGER,
+        app_id INTEGER,
+        FOREIGN KEY (app_id) REFERENCES app(id))''')
 
 # open the file to parse data and print to database
 with open('playstore_dataset.csv', newline='', encoding="utf8") as r:
@@ -57,21 +58,19 @@ with open('playstore_dataset.csv', newline='', encoding="utf8") as r:
         developer_email = row[14]
         rating_count = row[4]
         reviews = row[23]
-        category_name = row[2]
-
-        # cur.execute('INSERT INTO app VALUES (NULL,?,?,?,?,?,?,?,?)',
-        #         (app_name, app_identifier, app_version, app_size, release_date, app_rating, developer_id, rating_id))
-        
-        # rating_id = conn.lastrowid 
+        category_name = row[2] 
 
         cur.execute('INSERT INTO app VALUES (NULL,?,?,?,?,?,?,?)',
                     (app_name, app_identifier, app_version, app_size, release_date, app_rating, developer_id))
-
+        
+        app_id = cur.lastrowid
+        
         cur.execute('INSERT INTO developer VALUES (NULL,?,?,?)', 
                     (developer_uid, developer_website, developer_email))
         
-        cur.execute('INSERT INTO ratings_reviews VALUES (NULL,?,?)', 
-                    (rating_count, reviews))
+        cur.execute('INSERT INTO ratings_reviews VALUES (NULL,?,?,?)', 
+                    (rating_count, reviews,app_id))
+        
         
         cur.execute('INSERT INTO category VALUES (NULL,?)', 
                     (category_name,))
