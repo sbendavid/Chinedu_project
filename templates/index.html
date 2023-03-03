@@ -1,19 +1,15 @@
-<html>
-    <head><title>Playstore Applications</title></head>
-    <body>
-    <h1>Dataset for Applications in Playstore</h1>
+{% extends "base.html" %}
 
-        {% for row in rows %}
-        <p>Application:
-        <b>{{row["id"]}}</b> |
-        <b>{{row["app_name"]}}</b> |
-        {{row["app_id"]}} |
-        {{row["app_version"]}} |
-        {{row['app_size']}}	|
-        {{row["app_rating"]}} |
-        {{row["release_date"]}}
-        {{row["developer_id"]}}
-        </p>
-        {% endfor %}
+{% block content %}
 
-    </body></html>
+    <div class="text-center">
+        <h1>Playstore Applications</h1>
+        <p>Enjoy, rewrite Chinedu!</p>
+    </div>
+    <div class="text-center">
+        <a href="{{ url_for('application') }}" class="btn btn-primary btn-lg" role="button" data-bs-toggle="button">Application Data</a>
+        <a href="{{ url_for('developer') }}" class="btn btn-primary btn-lg" role="button" data-bs-toggle="button">Developer Data</a>
+        <a href="{{ url_for('review') }}" class="btn btn-primary btn-lg" role="button" data-bs-toggle="button">Review Data</a>
+    </div>
+
+{% endblock %}

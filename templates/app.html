@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="title text-center">
+        <h1>
+            Applications Table
+        </h1>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+            <th>S/N</th>
+            <th>Name</th>
+            <th>App Id</th>
+            <th>Version</th>
+            <th>Size</th>
+            <th>Rating</th>
+            <th>Release Date</th>
+            <th>Developer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+            <td>{{row["id"]}}</td>
+            <td><a href="{{ url_for('review') }}" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#exampleModal">{{row["app_name"]}}</a></td>
+            <td>{{row["app_identifier"]}}</td>
+            <td>{{row["app_version"]}}</td>
+            <td>{{row["app_size"]}}</td>
+            <td>{{row["app_rating"]}}</td>
+            <td>{{row["release_date"]}}</td>
+            <td>{{row["developer_id"]}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+{% endblock %}
