@@ -46,7 +46,14 @@ def review():
     conn = sqlite3.connect('playstore_apps.db')
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute("""SELECT * FROM ratings_reviews""")
+    # cur.execute("""SELECT ratings_reviews.*, app.app_rating
+    #                 FROM ratings_reviews
+    #                 INNER JOIN app ON ratings_reviews.rating_id = ratings_reviews.id
+    #             """)
+    cur.execute("""SELECT ratings_reviews.*, app.app_rating
+                FROM ratings_reviews
+                INNER JOIN app ON app.rating_id = ratings_reviews.id
+                """)
     rows = cur.fetchall()
 
     conn.close()

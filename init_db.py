@@ -14,12 +14,31 @@ conn.execute('DROP TABLE IF EXISTS ratings_reviews')
 
 # create tables
 conn.execute(
-    'CREATE TABLE developer (id INTEGER PRIMARY KEY AUTOINCREMENT, internal_id TEXT, website TEXT, developer_email TEXT)')
-conn.execute('CREATE TABLE category (id INTEGER PRIMARY KEY AUTOINCREMENT, category_name TEXT)')
+    '''CREATE TABLE developer (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        developer_uid TEXT, 
+        developer_website TEXT, 
+        developer_email TEXT)''')
 conn.execute(
-    'CREATE TABLE app (id INTEGER PRIMARY KEY AUTOINCREMENT, app_name TEXT, app_identifier TEXT, app_version TEXT, app_size TEXT, release_date TEXT, app_rating REAL, developer_id INTEGER)')
+    '''CREATE TABLE category (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        category_name TEXT)''')
 conn.execute(
-    'CREATE TABLE ratings_reviews (id INTEGER PRIMARY KEY AUTOINCREMENT, rating_count TEXT, reviews INTEGER)')
+    '''CREATE TABLE app (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        app_name TEXT, 
+        app_identifier TEXT, 
+        app_version TEXT, 
+        app_size TEXT, 
+        release_date TEXT, 
+        app_rating REAL, 
+        developer_id INTEGER)''')
+conn.execute(
+    '''CREATE TABLE ratings_reviews (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        rating_count TEXT, 
+        reviews INTEGER
+        FOREIGN KEY (app_rating) REFERENCES customers(customer_id))''')
 
 # open the file to parse data and print to database
 with open('playstore_dataset.csv', newline='', encoding="utf8") as r:
@@ -40,14 +59,22 @@ with open('playstore_dataset.csv', newline='', encoding="utf8") as r:
         reviews = row[23]
         category_name = row[2]
 
+        # cur.execute('INSERT INTO app VALUES (NULL,?,?,?,?,?,?,?,?)',
+        #         (app_name, app_identifier, app_version, app_size, release_date, app_rating, developer_id, rating_id))
+        
+        # rating_id = conn.lastrowid 
+
         cur.execute('INSERT INTO app VALUES (NULL,?,?,?,?,?,?,?)',
-                (app_name, app_identifier, app_version, app_size, release_date, app_rating, developer_id))
+                    (app_name, app_identifier, app_version, app_size, release_date, app_rating, developer_id))
 
-        cur.execute('INSERT INTO developer VALUES (NULL,?,?,?)', (developer_uid, developer_website, developer_email))
-
-        cur.execute('INSERT INTO ratings_reviews VALUES (NULL,?,?)', (rating_count, reviews))
-
-        cur.execute('INSERT INTO category VALUES (NULL,?)', (category_name,))
+        cur.execute('INSERT INTO developer VALUES (NULL,?,?,?)', 
+                    (developer_uid, developer_website, developer_email))
+        
+        cur.execute('INSERT INTO ratings_reviews VALUES (NULL,?,?)', 
+                    (rating_count, reviews))
+        
+        cur.execute('INSERT INTO category VALUES (NULL,?)', 
+                    (category_name,))
 
 # commit changes and close connection
 conn.commit()
