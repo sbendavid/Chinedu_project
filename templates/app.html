@@ -28,7 +28,7 @@
             <td>{{row["app_identifier"]}}</td>
             <td>{{row["app_version"]}}</td>
             <td>{{row["app_size"]}}</td>
-            <td><a href="#">{{ row['app_rating'] }}</a></td>
+            <td><a href="{{ url_for('ratings', id=row['app_rating']) }}">{{ row['app_rating'] }}</a></td>
             <td>{{row["release_date"]}}</td>
             <td>{{row["developer_id"]}}</td>
             </tr>

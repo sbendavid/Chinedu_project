@@ -59,7 +59,7 @@ def ratings(id):
     cur = conn.cursor()
     # get results from customers
     cur.execute('SELECT app_rating FROM app WHERE app_id = ?', (id,))
-    rating = cur.fetchone()[0]
+    rating = cur.fetchone()[1]
     print(f"The rating for app {id} is {rating}")
     conn.close()
     return render_template('result.html', rating=rating)
