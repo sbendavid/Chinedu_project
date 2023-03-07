@@ -31,8 +31,9 @@ conn.execute(
         app_version TEXT, 
         app_size TEXT, 
         release_date TEXT, 
-        app_rating REAL, 
-        developer_id INTEGER)''')
+        rating_id INTEGER, 
+        developer_id INTEGER,
+        FOREIGN KEY (rating_id) REFERENCES ratings_reviews(id))''')
 conn.execute(
     '''CREATE TABLE ratings_reviews (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -42,39 +43,47 @@ conn.execute(
         FOREIGN KEY (app_id) REFERENCES app(id))''')
 
 # open the file to parse data and print to database
-with open('playstore_dataset.csv', newline='', encoding="utf8") as r:
-    reader = csv.reader(r, delimiter=",")
-    next(reader)
-    for row in reader:
-        app_name = row[0]
-        app_identifier = row[1]
-        app_version = row[28]
-        app_size = row[10]
-        app_rating = row[3]
-        release_date = row[15]
-        developer_id = int(row[12])
-        developer_uid = row[12]
-        developer_website = row[13]
-        developer_email = row[14]
-        rating_count = row[4]
-        reviews = row[23]
-        category_name = row[2] 
+try:
+    with open('playstore_dataset.csv', newline='', encoding="utf8") as r:
+        reader = csv.reader(r, delimiter=",")
+        next(reader)
+        for row in reader:
+            app_name = row[0]
+            app_identifier = row[1]
+            app_version = row[28]
+            app_size = row[10]
+            app_rating = row[3]
+            release_date = row[15]
+            developer_id = int(row[12])
+            developer_uid = row[12]
+            developer_website = row[13]
+            developer_email = row[14]
+            rating_count = row[4]
+            reviews = row[23]
+            category_name = row[2]
+            try:
+                cur.execute('INSERT INTO app VALUES (NULL,?,?,?,?,?,?,?)',
+                            (app_name, app_identifier, app_version, app_size, release_date, app_rating, developer_id))
 
-        cur.execute('INSERT INTO app VALUES (NULL,?,?,?,?,?,?,?)',
-                    (app_name, app_identifier, app_version, app_size, release_date, app_rating, developer_id))
-        
-        app_id = cur.lastrowid
-        
-        cur.execute('INSERT INTO developer VALUES (NULL,?,?,?)', 
-                    (developer_uid, developer_website, developer_email))
-        
-        cur.execute('INSERT INTO ratings_reviews VALUES (NULL,?,?,?)', 
-                    (rating_count, reviews,app_id))
-        
-        
-        cur.execute('INSERT INTO category VALUES (NULL,?)', 
-                    (category_name,))
+                app_id = cur.lastrowid
 
-# commit changes and close connection
-conn.commit()
-conn.close()
+                cur.execute('INSERT INTO developer VALUES (NULL,?,?,?)',
+                            (developer_uid, developer_website, developer_email))
+
+                cur.execute('INSERT INTO ratings_reviews VALUES (NULL,?,?,?)',
+                            (rating_count, reviews,app_id))
+
+
+                cur.execute('INSERT INTO category VALUES (NULL,?)',
+                            (category_name,))
+            except sqlite3.IntegrityError as error:
+                print("Error inserting row:", error)
+
+            except Exception as e:
+                print("Unexpected error:", error)
+except:
+    print("Unable to open .csv file")
+finally:
+    # commit changes and close connection
+    conn.commit()
+    conn.close()
